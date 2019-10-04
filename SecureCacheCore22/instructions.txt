@@ -1,0 +1,3 @@
+﻿CREATE CACHE TABLE 
+$ dotnet sql-cache create "Server=tcp:jorge-dev.database.windows.net,1433;Initial Catalog=secure-cache;Persist Security Info=False;User ID=jorge-dev;Password=Erp201box$;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" dbo TestCache
+Table and index were created successfully.

@@ -24,7 +24,13 @@ namespace SecureCacheCore22
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMemoryCache();
+            //services.AddMemoryCache();
+            services.AddDistributedSqlServerCache(options =>
+            {
+                options.ConnectionString = Configuration["DistCache_ConnectionString"];
+                options.SchemaName = "dbo";
+                options.TableName = "TestCache";
+            });
             services.AddDataProtection();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
