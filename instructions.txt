@@ -1,23 +1,31 @@
-﻿PRE-REQUISTES
+﻿
+Distributed SQL Server Cache
+The Distributed SQL Server Cache implementation (AddDistributedSqlServerCache) allows the distributed cache to use a SQL Server database as its backing store. To create a SQL Server cached item table in a SQL Server instance, you can use the sql-cache tool. The tool creates a table with the name and schema that you specify.
+
+PRE-REQUISTES
 
 Create a SQL Database. We recommend using a Serverless database to maximize performance and keep it cost effective.
 https://docs.microsoft.com/en-us/azure/sql-database/sql-database-serverless
 
 
 CREATE CACHE TABLE 
+Create a table in SQL Server by running the sql-cache create command. Provide the SQL Server instance (Data Source), database (Initial Catalog), schema (for example, dbo), and table name (for example, TestCache):
 
-$ dotnet sql-cache create "Server=tcp:your-server.database.windows.net,1433;Initial Catalog=secure-cache;Persist Security Info=False;User ID=jorge-dev;Password=_YOUR_PASSWORD_;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" dbo TestCache
-Table and index were created successfully.
+    $ dotnet sql-cache create "Server=tcp:your-server.database.windows.net,1433;Initial Catalog=secure-cache;Persist Security Info=False;User ID=your-username;Password=_YOUR_PASSWORD_;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" dbo TestCache
+    Table and index were created successfully.
+
+https://docs.microsoft.com/en-us/aspnet/core/performance/caching/distributed?view=aspnetcore-2.2#distributed-sql-server-cache
 
 
 CONFIGURE Distribiured Cache on Startup.cs
 
-            services.AddDistributedSqlServerCache(options =>
-            {
-                options.ConnectionString = Configuration["DistCache_ConnectionString"];
-                options.SchemaName = "dbo";
-                options.TableName = "TestCache";
-            });
+    services.AddDistributedSqlServerCache(options =>
+    {
+        options.ConnectionString = Configuration["DistCache_ConnectionString"];
+        options.SchemaName = "dbo";
+        options.TableName = "TestCache";
+    });
+
 
 SAMPLE QUERIES
 
