@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.DataProtection;
@@ -10,26 +8,23 @@ using System.Text;
 
 namespace SecureCacheCore22.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("v1")]
     public class CacheController : Controller
     {
-        readonly string id = "1";
-        private readonly IDataProtector _protector;
-
         //private readonly IMemoryCache _cache;
         private readonly IDistributedCache _cache;
+        private readonly IDataProtector _protector;
 
         public CacheController(IDistributedCache memoryCache, IDataProtectionProvider protector)
         {
             _cache = memoryCache;
-            _protector = protector.CreateProtector("Cache.v1");
+            _protector = protector.CreateProtector("SecureCache.v1");
         }
 
-        [HttpGet]
-        public async Task<string> GetAsync()
+        [HttpGet("get/{id}")]
+        public async Task<string> GetAsync(string id)
         {
-            string data = string.Empty;
-
+            string data;
             try
             {
                 var encodedData = await _cache.GetAsync(id);
@@ -40,21 +35,38 @@ namespace SecureCacheCore22.Controllers
                 }
                 else
                 {
-                    data = "-";
+                    data = string.Empty;
                 }
             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             catch
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             {
+                data = string.Empty;
             }
             return data;
         }
 
-        [HttpGet("secure/")]
-        public async Task<string> GetSecureAsync()
+        [HttpGet("set/{id}/{data}")]
+        public string Set(string id, string data)
         {
-            string unprotectedPayload = string.Empty;
+            string result;
+            try
+            {
+                _cache.SetStringAsync(id, data);
+                result = "Ok";
+            }
+            catch (Exception ex)
+            {
+                result = ex.ToString();
+            }
+            return result;
+        }
+
+        [HttpGet("unprotect/{id}")]
+        public async Task<string> Unprotect(string id)
+        {
+            string unprotectedPayload;
             try
             {
                 var encodedData = await _cache.GetAsync(id);
@@ -67,31 +79,24 @@ namespace SecureCacheCore22.Controllers
                 }
                 else
                 {
-                    data = "-";
+                    data = string.Empty;
                 }
-                unprotectedPayload = _protector.Unprotect(data);
 
+                unprotectedPayload = _protector.Unprotect(data);
             }
 #pragma warning disable RECS0022 // A catch clause that catches System.Exception and has an empty body
             catch
 #pragma warning restore RECS0022 // A catch clause that catches System.Exception and has an empty body
             {
+                unprotectedPayload = string.Empty;
             }
             return unprotectedPayload;
         }
 
-
-        [HttpDelete]
-        public string Delete()
+        [HttpGet("protect/{id}/{data}")]
+        public string Protect(string id, string data)
         {
-            _cache.Remove(id);
-            return "Ok";
-        }
-
-        [HttpGet("set/{data}")]
-        public string Get(string data)
-        {
-            string result = string.Empty;
+            string result;
             try
             {
                 data = _protector.Protect(data);
@@ -105,9 +110,17 @@ namespace SecureCacheCore22.Controllers
             return result;
         }
 
+        [HttpDelete]
+        public string Delete(string id)
+        {
+            _cache.Remove(id);
+            return "Ok";
+        }
+
         [HttpPost]
         public string Post(object item)
         {
+            string id="1";
             string data = _protector.Protect(item.ToString());
             _cache.SetString(id, data);
             //string unprotectedPayload = _protector.Unprotect(data);

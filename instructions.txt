@@ -1,0 +1,16 @@
+﻿PRE-REQUISTES
+Create a SQL Database. We recommend using a Serverless database to maximize performance and keep it cost effective.
+https://docs.microsoft.com/en-us/azure/sql-database/sql-database-serverless
+
+CREATE CACHE TABLE 
+$ dotnet sql-cache create "Server=tcp:your-server.database.windows.net,1433;Initial Catalog=secure-cache;Persist Security Info=False;User ID=jorge-dev;Password=_YOUR_PASSWORD_;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" dbo TestCache
+Table and index were created successfully.
+
+CONFIGURE Distribiured Cache on Startup.cs
+
+            services.AddDistributedSqlServerCache(options =>
+            {
+                options.ConnectionString = Configuration["DistCache_ConnectionString"];
+                options.SchemaName = "dbo";
+                options.TableName = "TestCache";
+            });

@@ -20,7 +20,7 @@
     "SecureCacheCore22": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "v1/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
