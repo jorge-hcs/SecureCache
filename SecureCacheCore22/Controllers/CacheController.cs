@@ -18,6 +18,7 @@ namespace SecureCacheCore22.Controllers
         public CacheController(IDistributedCache memoryCache, IDataProtectionProvider protector)
         {
             _cache = memoryCache;
+            //Ideally we would like to create a protector per tenant in multi-tenant environments
             _protector = protector.CreateProtector("SecureCache.v1");
         }
 

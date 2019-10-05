@@ -18,3 +18,15 @@ CONFIGURE Distribiured Cache on Startup.cs
                 options.SchemaName = "dbo";
                 options.TableName = "TestCache";
             });
+
+SAMPLE QUERIES
+
+    DEV Host - https://securecachecore22.azurewebsites.net/
+
+    Cache (No encryption)
+    https://hostname/v1/set/{id}/{data}
+    https://hostname/v1/get/{id}
+
+    Encrypted Cache
+    https://hostname/v1/protect/{id}/{data}
+    https://hostname/v1/unprotect/{id}
